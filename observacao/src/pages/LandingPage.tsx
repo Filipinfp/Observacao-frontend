@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { CATEGORIES, STEPS } from "../constants";
 
 interface LandingPageProps {
@@ -8,12 +8,6 @@ interface LandingPageProps {
 
 const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
   const [protocol, setProtocol] = useState("");
-  const categoriesRef = useRef<HTMLDivElement>(null);
-  const footerRef = useRef<HTMLDivElement>(null);
-
-  const scrollToSection = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollIntoView({ behavior: "smooth" });
-  };
 
   return (
     <div className="font-sans bg-white min-h-screen text-slate-800">
@@ -26,21 +20,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
           <span className="font-bold text-lg text-[#0F2A4A] tracking-tight">
             Observ<span className="text-[#2E7BD4]">Ação</span>
           </span>
-        </div>
-
-        <div className="flex gap-7 text-sm font-medium text-slate-500">
-          {["Início", "Serviços", "Transparência"].map((l) => (
-            <button
-              key={l}
-              onClick={() => {
-                if (l === "Serviços") scrollToSection(categoriesRef);
-                if (l === "Transparência") scrollToSection(footerRef);
-              }}
-              className="hover:text-slate-800 transition-colors cursor-pointer"
-            >
-              {l}
-            </button>
-          ))}
         </div>
 
         <div className="flex gap-2.5">
@@ -78,36 +57,6 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
             bairro, acompanhe a resolução em tempo real e ajude a construir uma
             cidade melhor para todos.
           </p>
-
-          <div className="flex gap-10 mb-10">
-            {[
-              ["98%", "Demandas Resolvidas"],
-              ["48h", "Tempo Médio"],
-              ["12k+", "Cidades Atendidas"],
-            ].map(([v, l]) => (
-              <div key={l}>
-                <div className="text-3xl font-extrabold text-[#0F2A4A] leading-none">
-                  {v}
-                </div>
-                <div className="text-xs text-slate-400 mt-1 font-medium">
-                  {l}
-                </div>
-              </div>
-            ))}
-          </div>
-
-          <div className="flex gap-3">
-            <button
-              onClick={onLogin}
-              className="bg-[#0F2A4A] text-white rounded-xl px-7 py-3.5 text-sm font-bold flex items-center gap-2 hover:bg-[#1A3D6B] transition-colors"
-            >
-              <i className="ti ti-plus text-base" aria-hidden="true" /> Nova
-              Solicitação
-            </button>
-            <button className="bg-slate-50 text-slate-800 border border-slate-200 rounded-xl px-6 py-3.5 text-sm font-semibold hover:bg-slate-100 transition-colors">
-              Saiba mais
-            </button>
-          </div>
         </div>
 
         {/* ACTION CARDS */}
@@ -163,31 +112,22 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
       </section>
 
       {/* CATEGORIES */}
-      <section ref={categoriesRef} className="bg-slate-50 py-20 px-10">
+      <section className="bg-slate-50 py-20 px-10">
         <div className="max-w-[1180px] mx-auto">
-          <div className="flex justify-between items-end mb-9">
-            <div>
-              <h2 className="text-3xl font-extrabold mb-2 text-[#0F2A4A]">
-                Categorias de Atendimento
-              </h2>
-              <p className="text-slate-400 text-sm">
-                Selecione o tipo de problema para iniciar sua solicitação.
-              </p>
-            </div>
-            <a
-              href="#"
-              className="text-sm font-semibold text-[#2E7BD4] flex items-center gap-1 hover:underline"
-            >
-              Ver todas{" "}
-              <i className="ti ti-arrow-right text-sm" aria-hidden="true" />
-            </a>
+          <div className="mb-9">
+            <h2 className="text-3xl font-extrabold mb-2 text-[#0F2A4A]">
+              Categorias de Atendimento
+            </h2>
+            <p className="text-slate-400 text-sm">
+              Estas categorias são informativas e mostram os tipos de serviços
+              disponíveis.
+            </p>
           </div>
           <div className="grid grid-cols-7 gap-3.5">
             {CATEGORIES.map((cat) => (
-              <button
+              <div
                 key={cat.id}
-                onClick={onLogin}
-                className="bg-white border border-slate-100 rounded-2xl py-5 px-3 flex flex-col items-center gap-3 hover:border-blue-200 hover:shadow-sm transition-all"
+                className="bg-white border border-slate-100 rounded-2xl py-5 px-3 flex flex-col items-center gap-3"
               >
                 <div
                   className={`w-12 h-12 rounded-xl ${cat.bgColor} flex items-center justify-center`}
@@ -200,7 +140,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
                 <span className="text-[11px] font-semibold text-slate-500 text-center leading-tight">
                   {cat.label}
                 </span>
-              </button>
+              </div>
             ))}
           </div>
         </div>
@@ -244,7 +184,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ onLogin, onSignup }) => {
       </section>
 
       {/* FOOTER */}
-      <footer ref={footerRef} className="bg-[#0F2A4A] text-white/60 px-10 py-8">
+      <footer className="bg-[#0F2A4A] text-white/60 px-10 py-8">
         <div className="max-w-[1180px] mx-auto flex justify-between items-center">
           <div className="flex items-center gap-2">
             <div className="w-7 h-7 rounded-md bg-white/15 flex items-center justify-center">
