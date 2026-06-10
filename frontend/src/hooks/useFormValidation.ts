@@ -19,6 +19,7 @@ export interface FormErrors {
   phone?: string;
   state?: string;
   city?: string;
+  cargo?: string;
   password?: string;
   confirmPassword?: string;
 }
@@ -30,6 +31,8 @@ export interface FormData {
   phone: string;
   state: string;
   city: string;
+  tipo?: string;
+  cargo?: string;
   password: string;
   confirmPassword: string;
 }
@@ -42,6 +45,8 @@ export const useFormValidation = () => {
     phone: "",
     state: "",
     city: "",
+    tipo: "CIDADAO",
+    cargo: "",
     password: "",
     confirmPassword: "",
   });
@@ -83,6 +88,12 @@ export const useFormValidation = () => {
         case "city":
           if (!value) {
             newErrors.city = "Selecione sua cidade.";
+          }
+          break;
+        case "cargo":
+          // cargo validation is conditional; only validate here if present
+          if (value && value.trim().length === 0) {
+            newErrors.cargo = "Informe o cargo.";
           }
           break;
         case "password": {
@@ -146,6 +157,13 @@ export const useFormValidation = () => {
       newErrors.city = "Selecione sua cidade.";
     }
 
+    // cargo is required for non-CIDADAO users
+    if ((formData.tipo || "CIDADAO") !== "CIDADAO") {
+      if (!formData.cargo || formData.cargo.trim().length === 0) {
+        newErrors.cargo = "Informe o cargo para usuários públicos.";
+      }
+    }
+
     const passwordValidation = validatePassword(formData.password);
     if (!passwordValidation.isValid) {
       newErrors.password =
@@ -162,7 +180,17 @@ export const useFormValidation = () => {
 
   const isFormValid =
     Object.keys(errors).length === 0 &&
-    Object.values(formData).every((value) => value.trim() !== "");
+    // required fields
+    formData.fullName.trim() !== "" &&
+    formData.email.trim() !== "" &&
+    formData.cpf.trim() !== "" &&
+    formData.phone.trim() !== "" &&
+    formData.state.trim() !== "" &&
+    formData.city.trim() !== "" &&
+    formData.password.trim() !== "" &&
+    formData.confirmPassword.trim() !== "" &&
+    // cargo required only for public users
+    ((formData.tipo || "CIDADAO") === "CIDADAO" || (formData.cargo || "").trim() !== "");
 
   const resetForm = useCallback(() => {
     setFormData({
@@ -172,6 +200,8 @@ export const useFormValidation = () => {
       phone: "",
       state: "",
       city: "",
+      tipo: "CIDADAO",
+      cargo: "",
       password: "",
       confirmPassword: "",
     });
