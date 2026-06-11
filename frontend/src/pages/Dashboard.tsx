@@ -41,14 +41,11 @@ const CATEGORY_MAP: Record<string, CategoriaSolicitacao> = {
 };
 
 const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
-  const [search, setSearch] = useState("");
   const [showProfile, setShowProfile] = useState(false);
   const [filter, setFilter] = useState<FilterType>("todas");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [showRequestModal, setShowRequestModal] = useState(false);
-  const [requestTitle, setRequestTitle] = useState("");
   const [requestAddress, setRequestAddress] = useState("");
-  const [requestPhone, setRequestPhone] = useState("");
   const [requestPriority, setRequestPriority] = useState("MEDIA");
   const [requestDescription, setRequestDescription] = useState("");
 
@@ -117,9 +114,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
   const resetForm = () => {
     setShowRequestModal(false);
     setSelectedCategory("");
-    setRequestTitle("");
     setRequestAddress("");
-    setRequestPhone("");
     setRequestPriority("MEDIA");
     setRequestDescription("");
     setError("");
@@ -134,9 +129,8 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         categoria: CATEGORY_MAP[selectedCategory] ?? "OUTROS",
         descricao: requestDescription,
         prioridade: requestPriority as "BAIXA" | "MEDIA" | "ALTA" | "URGENTE",
-        usuarioId: usuario?.id,
+        usuarioId: usuario?.id ?? undefined,
         endereco: requestAddress,
-        telefone: requestPhone,
         anonima: false,
       });
 
@@ -222,16 +216,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               Observ<span className="text-[#2E7BD4]">Ação</span>
             </span>
           </div>
-
-          <div className="flex items-center gap-3">
-            <button className="relative rounded-lg border border-slate-200 bg-white px-3.5 py-1.5 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2">
-              <i className="ti ti-bell text-base" aria-hidden="true" />
-              Notificações
-              <span className="absolute -right-2 -top-1 bg-red-500 text-white rounded-full text-[10px] font-bold px-1.5 py-px">
-                2
-              </span>
-            </button>
-          </div>
         </div>
 
         {/* PROFILE DROPDOWN — fecha ao clicar fora */}
@@ -290,28 +274,11 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
         <div className="flex justify-between items-start mb-8">
           <div>
             <h1 className="text-3xl font-extrabold mb-1.5 text-[#0F2A4A]">
-              Olá, {userName} 👋
+              Olá, {userName}
             </h1>
             <p className="text-slate-400 text-sm">
               Acompanhe suas solicitações ou registre um novo problema em sua região.
             </p>
-          </div>
-          <div className="flex gap-2.5">
-            <div className="relative">
-              <i
-                className="ti ti-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"
-                aria-hidden="true"
-              />
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="Buscar por protocolo..."
-                className="bg-white border border-slate-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-slate-800 placeholder:text-slate-400 w-60 focus:outline-none focus:border-blue-400 transition-colors"
-              />
-            </div>
-            <button className="bg-[#2E7BD4] text-white rounded-xl px-5 text-sm font-bold hover:bg-blue-600 transition-colors">
-              Buscar
-            </button>
           </div>
         </div>
 
@@ -403,7 +370,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       return (
                         <tr
                           key={req.id}
-                          className="border-b border-slate-100 hover:bg-slate-50 transition-colors cursor-pointer"
+                          className="border-b border-slate-100"
                         >
                           <td className="px-6 py-4 align-top">
                             <div className="flex items-center gap-3">
@@ -477,30 +444,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
               >
                 + Nova solicitação
               </button>
-            </div>
-
-            {/* Notifications */}
-            <div className="bg-white border border-slate-100 rounded-2xl p-5">
-              <h3 className="text-sm font-bold mb-4 text-[#0F2A4A]">Notificações</h3>
-              <div className="space-y-3">
-                {ACTIVITY_EVENTS.map((ev, i) => (
-                  <div
-                    key={i}
-                    className="rounded-3xl border border-slate-100 bg-slate-50 p-4 flex items-start gap-3"
-                  >
-                    <div className="w-11 h-11 rounded-2xl bg-white flex items-center justify-center text-slate-700 shadow-sm">
-                      <i
-                        className={`ti ${ev.icon} text-lg ${ev.iconColor}`}
-                        aria-hidden="true"
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <p className="text-sm text-slate-700 leading-snug">{ev.msg}</p>
-                      <span className="text-[11px] text-slate-400">{ev.time}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </div>
@@ -576,22 +519,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                     <div className="rounded-2xl border border-slate-200 px-4 py-3 text-sm text-slate-700 bg-slate-50">
                       {selectedCategoryLabel}
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-slate-700 mb-2">
-                      Título do pedido
-                    </label>
-                    <input
-                      type="text"
-                      value={requestTitle}
-                      onChange={(e) => setRequestTitle(e.target.value)}
-                      placeholder="Ex: Poste apagado na rua"
-                      className="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-blue-400 transition-colors"
-                    />
-                  </div>
-
-                  <div>
+                    <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
                       Endereço da ocorrência
                     </label>
@@ -603,20 +531,7 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       className="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-blue-400 transition-colors"
                     />
                   </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-semibold text-slate-700 mb-2">
-                        Telefone de contato
-                      </label>
-                      <input
-                        type="tel"
-                        value={requestPhone}
-                        onChange={(e) => setRequestPhone(e.target.value)}
-                        placeholder="(11) 98765-4321"
-                        className="w-full border border-slate-200 rounded-2xl px-4 py-3 text-sm text-slate-800 focus:outline-none focus:border-blue-400 transition-colors"
-                      />
-                    </div>
+                  </div>                                  
                     <div>
                       <label className="block text-sm font-semibold text-slate-700 mb-2">
                         Prioridade
@@ -632,7 +547,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                         <option value="URGENTE">Urgente</option>
                       </select>
                     </div>
-                  </div>
 
                   <div>
                     <label className="block text-sm font-semibold text-slate-700 mb-2">
@@ -661,8 +575,6 @@ const Dashboard: React.FC<DashboardProps> = ({ onLogout }) => {
                       disabled={
                         loading ||
                         !selectedCategory ||
-                        !requestTitle ||
-                        !requestAddress ||
                         !requestDescription
                       }
                       className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-[#0F2A4A] text-white text-sm font-bold hover:bg-[#1A3D6B] transition-colors disabled:opacity-60 disabled:cursor-not-allowed flex items-center justify-center gap-2"
