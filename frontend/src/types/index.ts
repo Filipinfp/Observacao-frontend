@@ -1,4 +1,4 @@
-export type Screen = "landing" | "login" | "signup" | "dashboard" | "gestor";
+export type Screen = "landing" | "login" | "signup" | "dashboard" | "gestor" | "funcionario";
 
 export type RequestStatus = "ABERTO" | "EM EXECUÇÃO" | "CONCLUÍDO";
 

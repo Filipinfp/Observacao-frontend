@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { authService, UsuarioDTO } from "../../services/api";
 
 interface LoginPageProps {
-  onLoginSuccess: (destino: "dashboard" | "gestor") => void;
+  onLoginSuccess: (destino: "dashboard" | "gestor" | "funcionario") => void;
   onBack: () => void;
   onSignup?: () => void;
 }
@@ -28,41 +28,43 @@ const LoginPage: React.FC<LoginPageProps> = ({
     setError("");
 
     try {
-    if (isLogin) {
-      const response = await authService.login(email, password);
-      authService.saveAuth(response.usuario, response.token);
+      if (isLogin) {
+        const response = await authService.login(email, password);
+        authService.saveAuth(response.usuario, response.token);
 
-      const usuario = response.usuario;
+        const usuario = response.usuario;
 
-      if (usuario.tipo === "GESTOR") {
-        onLoginSuccess("gestor");
+        if (usuario.tipo === "GESTOR") {
+          onLoginSuccess("gestor");
+        } else if (usuario.tipo === "FUNCIONARIO_PUBLICO") {
+          onLoginSuccess("funcionario");
+        } else {
+          onLoginSuccess("dashboard");
+        }
       } else {
-        onLoginSuccess("dashboard");
+        // Register
+        const novoUsuario: Omit<UsuarioDTO, "id"> & { senha: string } = {
+          nome: name,
+          email,
+          tipo,
+          senha: password,
+        };
+
+        const response = await authService.register(novoUsuario);
+        authService.saveAuth(response.usuario, response.token);
+
+        setIsLogin(true);
+        setEmail("");
+        setPassword("");
+        setName("");
       }
-    } else {
-      // Register
-      const novoUsuario: Omit<UsuarioDTO, "id"> & { senha: string } = {
-        nome: name,
-        email,
-        tipo,
-        senha: password,
-      };
-
-      const response = await authService.register(novoUsuario);
-      authService.saveAuth(response.usuario, response.token);
-
-      setIsLogin(true);
-      setEmail("");
-      setPassword("");
-      setName("");
+    } catch (err: any) {
+      setError(err.message || "Erro ao processar requisição");
+      console.error("Auth error:", err);
+    } finally {
+      setLoading(false);
     }
-  } catch (err: any) {
-    setError(err.message || "Erro ao processar requisição");
-    console.error("Auth error:", err);
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <div className="font-sans bg-gradient-to-br from-blue-50 to-slate-100 min-h-screen flex items-center justify-center px-4">
